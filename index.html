@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Secret Message Vault</title>
+  <style>
+body {
+  font-family: sans-serif;
+  background: url('162.gif') no-repeat center center fixed;
+  background-size: cover;
+  color: #fff;
+  text-align: center;
+  padding: 50px;
+}
+    input, textarea { width: 80%; padding: 10px; margin: 10px 0; }
+    button { padding: 10px 20px; font-size: 16px; border-radius: 7px;}
+    button:hover { background: #444; color: #fff; }
+    .link-box { margin-top: 20px; background: #222; padding: 10px; border-radius: 7px; }
+    .sticky-image-box {
+  position: fixed;
+  bottom: 10px; /* Push it above any other fixed footer */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  background: rgba(17, 17, 17, 0);
+  padding: 10px;
+
+}
+
+.image-row {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 5px;
+}
+
+.image-row:last-child {
+  margin-bottom: 0;
+}
+
+.sticky-image-box img {
+  width: 88px;
+  height: 31px;
+  border: none;
+  display: block;
+  transition: transform 0.2s ease;
+}
+
+.sticky-image-box img:hover {
+  transform: scale(1.05);
+}
+  .footer-text {
+  text-align: center;
+  color: #ffffff;
+  font-size: 12px;
+  margin: 6px 0 2px;
+  font-family: monospace;
+  opacity: 0.8;
+}
+  </style>
+</head>
+<body>
+  <h1>🔐 SECRET MESSAGE VAULT</h1>
+  <textarea id="secretInput" placeholder="Type your secret message..."></textarea><br>
+  <button onclick="saveMessage()">Generate Secret Link</button>
+
+  <div class="link-box" id="linkBox" style="display:none;">
+    Copy this link and send it: <br>
+    <a id="secretLink" href="#" target="_blank" style="color:lightgreen;"></a>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js";
+    import { getDatabase, ref, set, get, remove } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-database.js";
+
+   const firebaseConfig = {
+  apiKey: "AIzaSyBYNXTyturZ_Up0btQUyDakdh0rnM-mRjU",
+  authDomain: "secret-message-vault-bd707.firebaseapp.com",
+  databaseURL: "https://secret-message-vault-bd707-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "secret-message-vault-bd707",
+  storageBucket: "secret-message-vault-bd707.firebasestorage.app",
+  messagingSenderId: "212456164107",
+  appId: "1:212456164107:web:803d3d3bbd8bd34725f00e"
+};
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    function generateID() {
+      return Math.random().toString(36).substring(2, 10);
+    }
+
+    window.saveMessage = async function () {
+      const message = document.getElementById('secretInput').value.trim();
+      if (!message) return alert("Please enter a message!");
+
+      const id = generateID();
+
+      await set(ref(db, 'secrets/' + id), { message });
+
+      const link = `${location.origin}${location.pathname}?id=${id}`;
+      document.getElementById('secretLink').href = link;
+      document.getElementById('secretLink').textContent = link;
+      document.getElementById('linkBox').style.display = "block";
+    };
+
+    // Message viewer (if a link has ?id=xxxxx)
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get('id');
+    if (id) {
+      get(ref(db, 'secrets/' + id)).then(snapshot => {
+        if (snapshot.exists()) {
+          alert("🔓 Secret Message:\n" + snapshot.val().message);
+          remove(ref(db, 'secrets/' + id)); // delete after view
+        } else {
+          alert("❌ Message not found or already viewed.");
+        }
+      });
+    }
+  </script>
+  <div class="sticky-image-box">
+  <div class="image-row">
+    <img src="k15 (1).gif" alt="1">
+    <img src="blink-0.gif" alt="2">
+    <img src="listeningtowinamp.gif" alt="3">
+    <img src="amazing_free_stuff.gif" alt="4">
+    <img src="htmllearn.gif" alt="5">
+    <img src="playstation.gif" alt="6">
+    <img src="www2.gif" alt="7">
+  </div>
+  <div class="image-row">
+    <img src="javanow.gif" alt="8">
+    <img src="haveasmile.gif" alt="9">
+    <img src="microsoftserverdownload.gif" alt="10">
+    <img src="msnexp.gif" alt="11">
+    <img src="nsbest.gif" alt="12">
+  </div>
+   <p class="footer-text">
+    © 2025 Made with 💖 by Vratej Dwivedi · All rights reserved
+  </p>
+</body>
+</html>
